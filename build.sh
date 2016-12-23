@@ -1,2 +1,2 @@
 #!/bin/bash
-CXX=~/tc/dtc/out/4.0/bin/clang++ ./configure.py --bootstrap
+CXX=~/tc/dtc/out/3.9/bin/clang++ ./configure.py --bootstrap
