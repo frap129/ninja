@@ -46,6 +46,22 @@ struct StringPiece {
     return len_ ? string(str_, len_) : string();
   }
 
+  size_t size() const {
+    return len_;
+  }
+
+  char operator[](size_t pos) const {
+    return str_[pos];
+  }
+
+  const char* begin() const {
+    return str_;
+  }
+
+  const char* end() const {
+    return str_ + len_;
+  }
+
   const char* str_;
   size_t len_;
 };

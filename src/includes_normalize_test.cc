@@ -32,7 +32,8 @@ string GetCurDir() {
 
 string NormalizeAndCheckNoError(const string& input) {
   string result, err;
-  EXPECT_TRUE(IncludesNormalize::Normalize(input.c_str(), NULL, &result, &err));
+  IncludesNormalize normalizer;
+  EXPECT_TRUE(normalizer.Normalize(input, &result, &err));
   EXPECT_EQ("", err);
   return result;
 }
@@ -40,8 +41,8 @@ string NormalizeAndCheckNoError(const string& input) {
 string NormalizeRelativeAndCheckNoError(const string& input,
                                         const string& relative_to) {
   string result, err;
-  EXPECT_TRUE(IncludesNormalize::Normalize(input.c_str(), relative_to.c_str(),
-                                           &result, &err));
+  IncludesNormalize normalizer(relative_to);
+  EXPECT_TRUE(normalizer.Normalize(input, &result, &err));
   EXPECT_EQ("", err);
   return result;
 }
@@ -129,8 +130,9 @@ TEST(IncludesNormalize, LongInvalidPath) {
       "instead of /Zi, but expect a similar error when you link your program.";
   // Too long, won't be canonicalized. Ensure doesn't crash.
   string result, err;
+  IncludesNormalize normalizer;
   EXPECT_FALSE(
-      IncludesNormalize::Normalize(kLongInputString, NULL, &result, &err));
+      normalizer.Normalize(kLongInputString, &result, &err));
   EXPECT_EQ("path too long", err);
 
   const char kExactlyMaxPath[] =
