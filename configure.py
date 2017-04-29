@@ -302,7 +302,7 @@ if platform.is_msvc():
               '/Zi',  # Create pdb with debug info.
               '/W4',  # Highest warning level.
               '/WX',  # Warnings as errors.
-              '/wd4530', '/wd4100', '/wd4706',
+              '/wd4530', '/wd4100', '/wd4706', '/wd4244',
               '/wd4512', '/wd4800', '/wd4702', '/wd4819',
               # Disable warnings about constant conditional expressions.
               '/wd4127',
@@ -580,21 +580,17 @@ all_targets += ninja_test
 
 
 n.comment('Ancillary executables.')
-objs = cxx('build_log_perftest')
-all_targets += n.build(binary('build_log_perftest'), 'link', objs,
-                       implicit=ninja_lib, variables=[('libs', libs)])
-objs = cxx('canon_perftest')
-all_targets += n.build(binary('canon_perftest'), 'link', objs,
-                       implicit=ninja_lib, variables=[('libs', libs)])
-objs = cxx('depfile_parser_perftest')
-all_targets += n.build(binary('depfile_parser_perftest'), 'link', objs,
-                       implicit=ninja_lib, variables=[('libs', libs)])
-objs = cxx('hash_collision_bench')
-all_targets += n.build(binary('hash_collision_bench'), 'link', objs,
-                              implicit=ninja_lib, variables=[('libs', libs)])
-objs = cxx('manifest_parser_perftest')
-all_targets += n.build(binary('manifest_parser_perftest'), 'link', objs,
-                              implicit=ninja_lib, variables=[('libs', libs)])
+
+for name in ['build_log_perftest',
+             'canon_perftest',
+             'depfile_parser_perftest',
+             'hash_collision_bench',
+             'manifest_parser_perftest',
+             'clparser_perftest']:
+  objs = cxx(name)
+  all_targets += n.build(binary(name), 'link', objs,
+                         implicit=ninja_lib, variables=[('libs', libs)])
+
 n.newline()
 
 n.comment('Generate a graph using the "graph" tool.')

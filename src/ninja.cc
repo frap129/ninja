@@ -233,7 +233,7 @@ int GuessParallelism() {
 /// Returns true if the manifest was rebuilt.
 bool NinjaMain::RebuildManifest(const char* input_file, string* err) {
   string path = input_file;
-  unsigned int slash_bits;  // Unused because this path is only used for lookup.
+  uint64_t slash_bits;  // Unused because this path is only used for lookup.
   if (!CanonicalizePath(&path, &slash_bits, err))
     return false;
   Node* node = state_.LookupNode(path);
@@ -247,15 +247,24 @@ bool NinjaMain::RebuildManifest(const char* input_file, string* err) {
   if (builder.AlreadyUpToDate())
     return false;  // Not an error, but we didn't rebuild.
 
-  // Even if the manifest was cleaned by a restat rule, claim that it was
-  // rebuilt.  Not doing so can lead to crashes, see
-  // https://github.com/ninja-build/ninja/issues/874
-  return builder.Build(err);
+  if (!builder.Build(err))
+    return false;
+
+  // The manifest was only rebuilt if it is now dirty (it may have been cleaned
+  // by a restat).
+  if (!node->dirty()) {
+    // Reset the state to prevent problems like
+    // https://github.com/ninja-build/ninja/issues/874
+    state_.Reset();
+    return false;
+  }
+
+  return true;
 }
 
 Node* NinjaMain::CollectTarget(const char* cpath, string* err) {
   string path = cpath;
-  unsigned int slash_bits;
+  uint64_t slash_bits;
   if (!CanonicalizePath(&path, &slash_bits, err))
     return NULL;
 
