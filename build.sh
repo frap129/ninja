@@ -1,2 +1,2 @@
 #!/bin/bash
-CXX=~/tc/dtc/out/4.0/bin/clang++ ./configure.py --bootstrap
+LDFLAGS="-lgomp -lgcc" CXX=~/tc/dtc/out/4.0/bin/clang++ ./configure.py --bootstrap

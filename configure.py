@@ -332,6 +332,7 @@ else:
               '-fno-exceptions',
               '-fvisibility=hidden', '-pipe',
               '-mllvm -polly',
+              '-lgomp',
               '-mllvm -polly-parallel',
               '-mllvm -polly-parallel-force',
               '-mllvm -polly-ast-use-context',
